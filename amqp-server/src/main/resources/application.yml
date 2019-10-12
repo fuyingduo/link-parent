@@ -1,0 +1,17 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    publisher-confirms: true
+rabbitmq:
+  custom:
+    producer:
+      has-open: false
+      default-exchange: test_exchange
+      default-queue: test_queue
+      default-routing-key: test_queue
+    consumer:
+      has-open: false
+      default-queue: test_queue

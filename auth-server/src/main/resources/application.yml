@@ -1,0 +1,6 @@
+server:
+  port: 8777
+
+spring:
+  application:
+    name: auth-server

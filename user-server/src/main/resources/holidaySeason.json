@@ -1,0 +1,21 @@
+{
+  "holidays": [
+    {
+      "year": 2019,
+      "holidaySeason": {
+        "festvivals": [
+          {
+            "id": 8,
+            "selectDate": "2019-08-15"
+          }
+        ],
+        "beondutys": [
+          {
+            "id": 9,
+            "selectDate": "2019-08-16"
+          }
+        ]
+      }
+    }
+  ]
+}

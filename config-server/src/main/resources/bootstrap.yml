@@ -1,0 +1,25 @@
+server:
+  port: 9776
+
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        jdbc:
+          sql: SELECT `key`, `value` FROM properties WHERE application = ? AND profile = ? AND lable = ?
+      label: master
+#    refresh:
+#      refreshable: none
+  profiles:
+    active: jdbc
+  datasource:
+    url: jdbc:mysql://localhost:3306/properties?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 12345678
+    driver-class-name: com.mysql.jdbc.Driver
+logging:
+  level:
+    org.springframework.jdbc.core: debug
+    org.springframework.jdbc.core.StatementCreatorUtils: trace

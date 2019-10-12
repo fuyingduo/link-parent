@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    config:
+      label: master
+      uri: http://localhost:9776
+      name: product-server
+      profile: dev
+      allow-override: true
+      override-none: true
+      override-system-properties: false

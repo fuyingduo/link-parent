@@ -1,0 +1,7 @@
+wechat:
+  appid: wx86400a1696a40176
+  mchId: 1539270861
+  notify_url: http://www.weixin.qq.com/wxpay/pay.php
+  spbillCreateIp: 115.171.60.183
+  #3a3a933443ca2d5786b66327f7fef5c4
+  secretKey: QWERTYUIOPasdfghjklz138001380000

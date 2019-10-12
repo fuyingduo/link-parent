@@ -1,0 +1,53 @@
+server:
+  port: 8011
+#
+spring:
+  security:
+    user:
+      name: admin
+      password: admin
+  application:
+    name: admin-server
+  boot:
+    admin:
+      #监控的断点有哪些
+      probed-endpoints: health, env, etrics, threaddump:dump, httptrace:trace,jolokia, info, logfile, refresh, flyway, liquibase, heapdump, loggers, auditevents
+      notify:
+        mail:
+          to: 17611121037@163.com
+          enabled: true
+          template: "classpath:/META-INF/spring-boot-admin-server/mail/status-changed.html"
+          from: 26690276@qq.com
+  mail:
+    host: smtp.qq.com
+    username: 26690276@qq.com
+    password: vubcciejqclfbigc
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+#
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    env:
+      enabled: false
+    health:
+      show-details: always
+#
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    instanceId: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+    metadata-map:
+      "user.name": ${spring.security.user.name}
+      "user.password": ${spring.security.user.password}

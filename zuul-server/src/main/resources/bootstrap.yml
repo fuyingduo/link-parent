@@ -1,0 +1,39 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: zuul-server
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    instanceId: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+
+zuul:
+  sensitiveHeaders: Cookie, Set-Cookie, Authorization
+  routes:
+    user-server:
+      path: /user/**
+      serviceId: user-server
+    schedule-server:
+      path: /schedule/**
+      serviceId: schedule-server
+    amqp-server:
+      path: /amqp/**
+      serviceId: amqp-server
+    file-server:
+      path: /file/**
+      serviceId: file-server
+    product-server:
+      path: /product/**
+      serviceId: product-server
+  host:
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
+    max-per-route-connections: 1000
+    max-total-connections: 1000
+

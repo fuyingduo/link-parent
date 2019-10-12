@@ -1,0 +1,16 @@
+enableFeaturePreview('IMPROVED_POM_SUPPORT')
+rootProject.name = 'link-parent'
+include 'eureka-server'
+include 'config-server'
+include 'zuul-server'
+include 'zipkin-server'
+include 'auth-server'
+include 'user-server'
+include 'file-server'
+include 'common-server'
+include 'schedule-server'
+include 'amqp-server'
+include 'payment-server'
+include 'product-server'
+include 'admin-server'
+
