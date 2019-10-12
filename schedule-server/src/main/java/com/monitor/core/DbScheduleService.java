@@ -63,10 +63,27 @@ public class DbScheduleService implements IDbScheduleService, IDbScheduleEndpoin
     }
 
     @Override
+    public Boolean enableTimer(String taskId) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        DbSchedule dbSchedule = this.dbScheduleRepository.findDbScheduleByTaskIdAndStatus(taskId, TaskStatusEnum.DISABLE.code());
+        if (null == dbSchedule) {
+            LOGGER.error("[动态定时] 启用TaskId:{} 定时器失败，定时器不存在...", taskId);
+            return false;
+        }
+        String performClass = dbSchedule.getPerformClass();
+        Class<? extends IRunnable> aClass = (Class<? extends IRunnable>) Class.forName(performClass);
+        IRunnable iRunnable = aClass.newInstance();
+        RegistrerParams registrerModel = new RegistrerParams(taskId, dbSchedule.getExpression());
+        this.dynamicRegistration(iRunnable, registrerModel, true);
+        LOGGER.debug("[动态定时] 定时器TaskId:{} 启用成功...", taskId);
+        return true;
+    }
+
+    @Override
     public Boolean shutdownTimer(String taskId) {
         DbSchedule dbSchedule = this.dbScheduleRepository.findDbScheduleByTaskIdAndStatus(taskId, TaskStatusEnum.ENABLE.code());
         if (null != dbSchedule) {
             dbSchedule.setStatus(TaskStatusEnum.DISABLE.code());
+            dbSchedule.setUpDate(LocalDateTime.now());
             this.dbScheduleRepository.save(dbSchedule);
         }
         return this.scheduleInitializeSharedData.shutdown(taskId);

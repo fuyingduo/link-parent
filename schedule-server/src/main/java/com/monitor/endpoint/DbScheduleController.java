@@ -19,8 +19,8 @@ public class DbScheduleController {
     private IDbScheduleService iDbScheduleService;
 
     @PostMapping
-    public FeignResult addTimer() {
-        RegistrerParams params = new RegistrerParams(TaskUtil.generate("TS", "* * * * * *"), "* * * * * *");
+    public FeignResult addTimer(String tag, String cron) {
+        RegistrerParams params = new RegistrerParams(TaskUtil.generate(tag, cron), cron);
         Boolean ts = iDbScheduleService.addTimer(params, new DefaultRunnable());
         if (ts) {
             return FeignResult.ok(true);
@@ -38,9 +38,18 @@ public class DbScheduleController {
         return FeignResult.err(-1, "err");
     }
 
-    @DeleteMapping
-    public FeignResult shutdownTimer() {
-        Boolean aBoolean = iDbScheduleService.shutdownTimer("TS424242424242");
+    @PutMapping(value = "/{taskId}/enable")
+    public FeignResult enableTimer(@PathVariable String taskId) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        Boolean aBoolean = iDbScheduleService.enableTimer(taskId);
+        if (aBoolean) {
+            return FeignResult.ok(true);
+        }
+        return FeignResult.err(-1, "err");
+    }
+
+    @PutMapping(value = "/{taskId}")
+    public FeignResult shutdownTimer(@PathVariable String taskId) {
+        Boolean aBoolean = iDbScheduleService.shutdownTimer(taskId);
         if (aBoolean) {
             return FeignResult.ok(true);
         }

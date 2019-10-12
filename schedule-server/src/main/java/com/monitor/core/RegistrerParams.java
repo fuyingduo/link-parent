@@ -13,11 +13,11 @@ public class RegistrerParams {
         this.expression = expression;
     }
 
-    String getTaskId() {
+    public String getTaskId() {
         return taskId;
     }
 
-    String getExpression() {
+    public String getExpression() {
         return expression;
     }
 

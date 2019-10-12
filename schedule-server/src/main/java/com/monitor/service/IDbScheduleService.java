@@ -27,6 +27,14 @@ public interface IDbScheduleService {
     Boolean addOrUpdateTimer(RegistrerParams registrerModel, IRunnable iRunnable);
 
     /**
+     * 启用定时器
+     *
+     * @param taskId 唯一标识
+     * @return success/full
+     */
+    Boolean enableTimer(String taskId) throws ClassNotFoundException, IllegalAccessException, InstantiationException;
+
+    /**
      * 删除定时器
      *
      * @param taskId 唯一标识
