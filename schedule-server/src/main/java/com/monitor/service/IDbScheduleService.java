@@ -1,10 +1,6 @@
 package com.monitor.service;
 
-import com.monitor.core.IRunnable;
 import com.monitor.core.RegistrerParams;
-import com.monitor.entity.DbSchedule;
-
-import java.util.List;
 
 /**
  * 定时器接口
@@ -37,22 +33,4 @@ public interface IDbScheduleService {
      * @return success/full
      */
     Boolean shutdownTimer(String taskId);
-
-    /**
-     * 查询所有可用定时器
-     *
-     * @param hasCorrect 是否纠正数据库状态
-     *                   {hasCorrect为true}查询实际已经注册定时器并纠正数据库中定时器状态
-     * @return List
-     */
-    List<DbSchedule> availableTimerHasCorrect(Boolean hasCorrect);
-
-    /**
-     * 动态注册定时器
-     *
-     * @param iRunnable     线程接口
-     * @param model         注册信息
-     * @param hasPersistent 是否持久化
-     */
-    void dynamicRegistration(IRunnable iRunnable, RegistrerParams model, Boolean hasPersistent);
 }

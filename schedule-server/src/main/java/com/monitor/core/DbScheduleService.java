@@ -1,13 +1,11 @@
-package com.monitor.service.impl;
+package com.monitor.core;
 
 import com.monitor.common.Querys;
-import com.monitor.core.IRunnable;
-import com.monitor.core.RegisteredDataManagement;
-import com.monitor.core.RegistrerParams;
 import com.monitor.dao.DbScheduleRepository;
 import com.monitor.entity.DbSchedule;
 import com.monitor.enums.TaskStatusEnum;
 import com.monitor.service.IDbScheduleService;
+import com.monitor.service.IRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +26,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * created by fuyd on 2019-07-19
  */
-public class DbScheduleService implements IDbScheduleService {
+public class DbScheduleService implements IDbScheduleService, IDbScheduleEndpoint {
 
     @Autowired
     private RegisteredDataManagement scheduleInitializeSharedData;
@@ -46,7 +44,7 @@ public class DbScheduleService implements IDbScheduleService {
         DbSchedule dbSchedule = new DbSchedule();
         BeanUtils.copyProperties(registrerModel, dbSchedule);
         this.insertDb(dbSchedule, iRunnable);
-        dynamicRegistration(iRunnable, registrerModel, true);
+        this.dynamicRegistration(iRunnable, registrerModel, true);
         return true;
     }
 
@@ -60,7 +58,7 @@ public class DbScheduleService implements IDbScheduleService {
         this.scheduleInitializeSharedData.shutdown(taskId);
         BeanUtils.copyProperties(registrerModel, dbSchedule);
         this.insertDb(dbSchedule, iRunnable);
-        dynamicRegistration(iRunnable, registrerModel, true);
+        this.dynamicRegistration(iRunnable, registrerModel, true);
         return true;
     }
 

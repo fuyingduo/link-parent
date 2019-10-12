@@ -1,7 +1,6 @@
 package com.monitor.core;
 
 import com.monitor.service.IDbScheduleService;
-import com.monitor.service.impl.DbScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -70,7 +69,7 @@ public class ScheduleInitialization implements SchedulingConfigurer {
     @Bean
     @ConditionalOnMissingBean
     public IRegistrationDataInitialization iRegistrationDataInitialization() {
-        this.iRegistrationDataInitialization = new RegistrationDataInitialization(iDbScheduleService());
+        this.iRegistrationDataInitialization = new RegistrationDataInitialization((IDbScheduleEndpoint) iDbScheduleService());
         return this.iRegistrationDataInitialization;
     }
 
