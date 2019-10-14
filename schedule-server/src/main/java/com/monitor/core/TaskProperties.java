@@ -55,6 +55,7 @@ public class TaskProperties {
      * 线程池
      */
     public static class ThreadPool {
+
         private int size;
 
         public int getSize() {
@@ -70,6 +71,7 @@ public class TaskProperties {
      * 数据源
      */
     public static class Datasource {
+
         private String url;
         private String username;
         private String password;

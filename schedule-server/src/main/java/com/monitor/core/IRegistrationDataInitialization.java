@@ -7,5 +7,8 @@ package com.monitor.core;
  */
 public interface IRegistrationDataInitialization {
 
+    /**
+     * 已注册信息初始化加载
+     */
     void dataInitialization();
 }

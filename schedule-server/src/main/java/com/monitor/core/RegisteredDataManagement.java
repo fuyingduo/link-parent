@@ -43,14 +43,14 @@ public class RegisteredDataManagement {
     /**
      * 获取注册实例
      */
-    public ScheduledTaskRegistrar getTaskRegistrar() {
+    ScheduledTaskRegistrar getTaskRegistrar() {
         return taskRegistrar;
     }
 
     /**
      * 获取已注册定时器信息
      */
-    public ConcurrentHashMap<String, String> getHasBeenreistered() {
+    ConcurrentHashMap<String, String> getHasBeenreistered() {
         if (null == hasBeenreistered) {
             hasBeenreistered = new ConcurrentHashMap<>();
         }
@@ -60,7 +60,7 @@ public class RegisteredDataManagement {
     /**
      * 获取已注册定时器设置
      */
-    public ConcurrentHashMap<String, ScheduledFuture<?>> getFutures() {
+    ConcurrentHashMap<String, ScheduledFuture<?>> getFutures() {
         if (null == futures) {
             futures = new ConcurrentHashMap<>();
         }
@@ -72,7 +72,7 @@ public class RegisteredDataManagement {
      *
      * @param taskId 唯一标识
      */
-    public boolean shutdown(String taskId) {
+    boolean shutdown(String taskId) {
         ScheduledFuture<?> future = this.futures.get(taskId);
         if (null == future) {
             LOGGER.warn("[动态定时] 内存中没有taskId:{} 定时器在执行，无法停止!", taskId);

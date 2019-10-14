@@ -8,6 +8,6 @@ import com.monitor.service.IRunnable;
 public class DefaultRunnable implements IRunnable {
     @Override
     public void run() {
-        System.out.println(classType() + "---");
+        System.out.println(classType() + ": 【Thread】+" + Thread.currentThread().getName());
     }
 }

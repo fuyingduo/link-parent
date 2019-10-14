@@ -2,7 +2,6 @@ package com.monitor.endpoint;
 
 import com.monitor.base.FeignResult;
 import com.monitor.core.DefaultRunnable;
-import com.monitor.core.RegistrerParams;
 import com.monitor.service.IDbScheduleService;
 import com.monitor.utils.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,23 +18,13 @@ public class DbScheduleController {
     private IDbScheduleService iDbScheduleService;
 
     @PostMapping
-    public FeignResult addTimer(String tag, String cron) {
-        RegistrerParams params = new RegistrerParams(TaskUtil.generate(tag, cron), cron);
-        Boolean ts = iDbScheduleService.addTimer(params, new DefaultRunnable());
-        if (ts) {
-            return FeignResult.ok(true);
-        }
-        return FeignResult.err(-1, "err");
+    public FeignResult addTimer(String tag, String cron, String introduction) {
+        return FeignResult.ok(iDbScheduleService.addTimer(tag, cron, new DefaultRunnable(), introduction));
     }
 
     @PutMapping
-    public FeignResult addOrUpdateTimer() {
-        RegistrerParams params = new RegistrerParams(TaskUtil.generate("TS", "* * * * * *"), "* * * * * *");
-        Boolean aBoolean = iDbScheduleService.addOrUpdateTimer(params, new DefaultRunnable());
-        if (aBoolean) {
-            return FeignResult.ok(true);
-        }
-        return FeignResult.err(-1, "err");
+    public FeignResult updateTimer(String tag, String cron) {
+        return FeignResult.ok(iDbScheduleService.updateTimer(TaskUtil.generate(tag, cron), cron));
     }
 
     @PutMapping(value = "/{taskId}/enable")

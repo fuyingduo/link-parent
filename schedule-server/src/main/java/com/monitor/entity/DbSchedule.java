@@ -16,20 +16,29 @@ public class DbSchedule {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "task_id")
+    @Column(name = "task_id", columnDefinition = "varchar(30) comment '定时器唯一标识'", unique = true, nullable = false, updatable = false)
     private String taskId;
 
+    @Column(columnDefinition = "varchar(30) comment 'cron表达式'", nullable = false)
     private String expression;
 
-    @Column(name = "up_date")
+    @Column(name = "up_date", columnDefinition = "datetime comment '更新时间'", nullable = false)
     private LocalDateTime upDate;
 
-    @Column(name = "perform_class")
+    @Column(name = "perform_class", columnDefinition = "varchar(50) comment '业务处理实现类'", nullable = false)
     private String performClass;
 
+    @Column(columnDefinition = "tinyint(4) comment '定时器状态 1启用 2禁用'", nullable = false)
     private Integer status;
 
+    @Column(name = "application_name", columnDefinition = "varchar(40) comment '服务名'", nullable = false)
+    private String applicationName;
+
+    @Column(columnDefinition = "varchar(100) default '' comment '简介'")
+    private String introduction;
+
     @Version
+    @Column(columnDefinition = "int(20) default '0' comment '版本号'")
     private Integer version;
 
     public Integer getId() {
@@ -80,6 +89,22 @@ public class DbSchedule {
         this.status = status;
     }
 
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    public String getIntroduction() {
+        return introduction;
+    }
+
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
+    }
+
     public Integer getVersion() {
         return version;
     }
@@ -97,6 +122,8 @@ public class DbSchedule {
                 ", upDate=" + upDate +
                 ", performClass='" + performClass + '\'' +
                 ", status=" + status +
+                ", applicationName='" + applicationName + '\'' +
+                ", introduction='" + introduction + '\'' +
                 ", version=" + version +
                 '}';
     }

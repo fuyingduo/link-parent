@@ -1,6 +1,7 @@
 package com.monitor.core;
 
 /**
+ * 定时器注册参数
  * created by fuyd on 2019-07-19
  */
 public class RegistrerParams {
@@ -8,18 +9,19 @@ public class RegistrerParams {
     private String taskId;
     private String expression;
 
-    public RegistrerParams(String taskId, String expression) {
+    RegistrerParams(String taskId, String expression) {
         this.taskId = taskId;
         this.expression = expression;
     }
 
-    public String getTaskId() {
+    String getTaskId() {
         return taskId;
     }
 
-    public String getExpression() {
+    String getExpression() {
         return expression;
     }
+
 
     @Override
     public String toString() {

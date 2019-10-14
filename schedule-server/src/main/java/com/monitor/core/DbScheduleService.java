@@ -4,15 +4,19 @@ import com.monitor.common.Querys;
 import com.monitor.dao.DbScheduleRepository;
 import com.monitor.entity.DbSchedule;
 import com.monitor.enums.TaskStatusEnum;
+import com.monitor.enums.TimerExceptionEnum;
+import com.monitor.exception.TimerException;
 import com.monitor.service.IDbScheduleService;
 import com.monitor.service.IRunnable;
+import com.monitor.utils.TaskUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -28,46 +32,62 @@ import static java.util.stream.Collectors.toList;
  */
 public class DbScheduleService implements IDbScheduleService, IDbScheduleEndpoint {
 
+    @Value("${spring.application.name}")
+    private String applicationName;
+
     @Autowired
     private RegisteredDataManagement scheduleInitializeSharedData;
     @Autowired
     private DbScheduleRepository dbScheduleRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(DbScheduleService.class);
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean addTimer(RegistrerParams registrerModel, IRunnable iRunnable) {
-        String taskId = registrerModel.getTaskId();
-        if (null != dbScheduleRepository.findDbScheduleByTaskIdAndStatus(taskId, TaskStatusEnum.ENABLE.code())) {
-            LOGGER.warn("[动态定时] 已被注册 TaskId:{}", taskId);
-            return false;
-        }
+    public String addTimer(String tag, String expression, IRunnable iRunnable, String introduction) {
+
+        if (StringUtils.isEmpty(tag))
+            throw new TimerException(TimerExceptionEnum.TAG_NONE_EMPTY.code());
+
+        if (StringUtils.isEmpty(expression))
+            throw new TimerException(TimerExceptionEnum.TAG_NONE_EMPTY.code());
+
+        String taskId = TaskUtil.generate(tag, expression);
+        if (null != dbScheduleRepository.findDbScheduleByTaskId(taskId))
+            throw new TimerException(TimerExceptionEnum.PRIMARY_KEY_REPEAT.code());
+
         DbSchedule dbSchedule = new DbSchedule();
-        BeanUtils.copyProperties(registrerModel, dbSchedule);
-        this.insertDb(dbSchedule, iRunnable);
-        this.dynamicRegistration(iRunnable, registrerModel, true);
-        return true;
+        dbSchedule.setTaskId(taskId);
+        dbSchedule.setExpression(expression);
+        dbSchedule.setIntroduction(introduction);
+        dbSchedule.setPerformClass(iRunnable.getClass().getName());
+        dbSchedule.setApplicationName(applicationName);
+        dbSchedule.setStatus(TaskStatusEnum.ENABLE.code());
+        dbSchedule.setUpDate(LocalDateTime.now());
+        dbScheduleRepository.save(dbSchedule);
+        this.dynamicRegistration(iRunnable, new RegistrerParams(taskId, expression), true);
+        return taskId;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean addOrUpdateTimer(RegistrerParams registrerModel, IRunnable iRunnable) {
-        String taskId = registrerModel.getTaskId();
-        DbSchedule dbSchedule = dbScheduleRepository.findDbScheduleByTaskId(taskId);
+    public String updateTimer(String taskId, String expression) {
+        DbSchedule dbSchedule = dbScheduleRepository.findDbScheduleByTaskIdAndStatus(taskId, TaskStatusEnum.DISABLE.code());
         if (null == dbSchedule) {
-            dbSchedule = new DbSchedule();
+            LOGGER.error("[更新定时器] 失败... taskId:{} 定时器不存在", taskId);
+            throw new TimerException(TimerExceptionEnum.TIMER_DOESN_EXIST.code());
         }
-        this.scheduleInitializeSharedData.shutdown(taskId);
-        BeanUtils.copyProperties(registrerModel, dbSchedule);
-        this.insertDb(dbSchedule, iRunnable);
-        this.dynamicRegistration(iRunnable, registrerModel, true);
-        return true;
+        dbSchedule.setExpression(expression);
+        dbSchedule.setUpDate(LocalDateTime.now());
+        return dbScheduleRepository.save(dbSchedule).getTaskId();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean enableTimer(String taskId) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         DbSchedule dbSchedule = this.dbScheduleRepository.findDbScheduleByTaskIdAndStatus(taskId, TaskStatusEnum.DISABLE.code());
         if (null == dbSchedule) {
             LOGGER.error("[动态定时] 启用TaskId:{} 定时器失败，定时器不存在...", taskId);
-            return false;
+            throw new TimerException(TimerExceptionEnum.TIMER_DOESN_EXIST.code());
         }
         String performClass = dbSchedule.getPerformClass();
         Class<? extends IRunnable> aClass = (Class<? extends IRunnable>) Class.forName(performClass);
@@ -78,6 +98,7 @@ public class DbScheduleService implements IDbScheduleService, IDbScheduleEndpoin
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean shutdownTimer(String taskId) {
         DbSchedule dbSchedule = this.dbScheduleRepository.findDbScheduleByTaskIdAndStatus(taskId, TaskStatusEnum.ENABLE.code());
@@ -92,6 +113,9 @@ public class DbScheduleService implements IDbScheduleService, IDbScheduleEndpoin
     @Override
     public List<DbSchedule> availableTimerHasCorrect(Boolean hasCorrect) {
 
+        if (null == this.dbScheduleRepository) {
+            return new ArrayList<>();
+        }
         List<DbSchedule> dbSchedules = this.dbHasBeenRegistereds();
         if (!hasCorrect) {
             return dbSchedules;
@@ -118,15 +142,13 @@ public class DbScheduleService implements IDbScheduleService, IDbScheduleEndpoin
 
     @Override
     public void dynamicRegistration(IRunnable iRunnable, RegistrerParams model, Boolean hasPersistent) {
-        if (!this.parameterCalibration(model)) {
-            LOGGER.error("[动态定时] 注册失败! 传入参数校验失败...");
-            return;
-        }
+
+        this.parameterCalibration(model);
 
         ThreadPoolTaskScheduler scheduler = (ThreadPoolTaskScheduler) scheduleInitializeSharedData.getTaskRegistrar().getScheduler();
         if (null == scheduler) {
             LOGGER.error("[动态定时] 初始化线程池失败...");
-            return;
+            throw new TimerException(TimerExceptionEnum.THREAD_POOL_INITIALIZE_FAILURE.code());
         }
         String expression = scheduleInitializeSharedData.getHasBeenreistered().get(model.getTaskId());
         if (!StringUtils.isEmpty(expression)) {
@@ -138,24 +160,13 @@ public class DbScheduleService implements IDbScheduleService, IDbScheduleEndpoin
             }
         }
         ScheduledFuture<?> future = scheduler.schedule(iRunnable, new CronTrigger(model.getExpression()));
-        if (null != future) {
-            scheduleInitializeSharedData.getFutures().put(model.getTaskId(), future);
+        if (null == future) {
+            throw new TimerException(TimerExceptionEnum.REGISTRATION_FAILED.code());
         }
+
+        scheduleInitializeSharedData.getFutures().put(model.getTaskId(), future);
         scheduleInitializeSharedData.getHasBeenreistered().put(model.getTaskId(), model.getExpression());
         LOGGER.info("[动态定时] 注册成功! TaskId:{}, Expression:{}", model.getTaskId(), model.getExpression());
-    }
-
-    /**
-     * 插入数据库
-     *
-     * @param dbSchedule 定时器配置
-     * @param iRunnable  业务逻辑接口
-     */
-    private void insertDb(DbSchedule dbSchedule, IRunnable iRunnable) {
-        dbSchedule.setStatus(TaskStatusEnum.ENABLE.code());
-        dbSchedule.setPerformClass(iRunnable.getClass().getName());
-        dbSchedule.setUpDate(LocalDateTime.now());
-        dbScheduleRepository.save(dbSchedule);
     }
 
     /**
@@ -164,16 +175,12 @@ public class DbScheduleService implements IDbScheduleService, IDbScheduleEndpoin
      * @param registrerModel 注册信息
      * @return success/fail
      */
-    private boolean parameterCalibration(RegistrerParams registrerModel) {
-        if (null == registrerModel) {
-            LOGGER.error("[动态定时] 参数校验失败!");
-            return false;
-        }
-        if (StringUtils.isEmpty(registrerModel.getTaskId())) {
-            LOGGER.error("[动态定时] 参数校验失败! TaskId{NULL}");
-            return false;
-        }
-        return !StringUtils.isEmpty(registrerModel.getExpression());
+    private void parameterCalibration(RegistrerParams registrerModel) {
+        if (StringUtils.isEmpty(registrerModel.getTaskId()))
+            throw new TimerException(TimerExceptionEnum.TASK_NONE_EMPTY.code());
+
+        if (StringUtils.isEmpty(registrerModel.getExpression()))
+            throw new TimerException(TimerExceptionEnum.EXPRESSION_NONE_EMPTY.code());
     }
 
     /**

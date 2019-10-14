@@ -12,6 +12,6 @@ schdule:
     properties:
       hibernate:
         hbm2ddl:
-          auto: update
+          auto: create
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     database: mysql
