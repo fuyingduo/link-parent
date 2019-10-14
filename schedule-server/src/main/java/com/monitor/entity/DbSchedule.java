@@ -16,7 +16,7 @@ public class DbSchedule {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "task_id", columnDefinition = "varchar(30) comment '定时器唯一标识'", unique = true, nullable = false, updatable = false)
+    @Column(name = "task_id", columnDefinition = "varchar(100) comment '定时器唯一标识'", unique = true, nullable = false, updatable = false)
     private String taskId;
 
     @Column(columnDefinition = "varchar(30) comment 'cron表达式'", nullable = false)

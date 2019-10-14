@@ -1,5 +1,7 @@
 package com.monitor.core;
 
+import com.monitor.enums.TimerExceptionEnum;
+import com.monitor.exception.TimerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
@@ -80,7 +82,7 @@ public class RegisteredDataManagement {
         }
         if (!future.cancel(true)) {
             LOGGER.error("[动态定时] 尝试停止taskId:{} 定时器失败", taskId);
-            return false;
+            throw new TimerException(TimerExceptionEnum.STOP_FAILED.code());
         }
         this.hasBeenreistered.remove(taskId);
         this.futures.remove(taskId);

@@ -43,7 +43,7 @@ public interface IDbScheduleService {
     Boolean enableTimer(String taskId) throws ClassNotFoundException, IllegalAccessException, InstantiationException;
 
     /**
-     * 删除定时器
+     * 禁用定时器
      * 在已启用定时器中查找指定TaskId定时器并关闭
      *
      * @param taskId 唯一标识
@@ -51,4 +51,14 @@ public interface IDbScheduleService {
      * @return success/full
      */
     Boolean shutdownTimer(String taskId);
+
+    /**
+     * 删除定时器
+     * 必须提前关闭定时器否则删除失败 {@see shutdownTimer}
+     *
+     * @param taskId 唯一标识
+     *               更新/删除/关闭定时器必要参数
+     * @return success/full
+     */
+    Boolean deleteTimer(String taskId);
 }

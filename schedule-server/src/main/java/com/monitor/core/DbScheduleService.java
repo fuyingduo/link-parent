@@ -51,7 +51,7 @@ public class DbScheduleService implements IDbScheduleService, IDbScheduleEndpoin
         if (StringUtils.isEmpty(expression))
             throw new TimerException(TimerExceptionEnum.TAG_NONE_EMPTY.code());
 
-        String taskId = TaskUtil.generate(tag, expression);
+        String taskId = TaskUtil.generate(applicationName, tag, expression);
         if (null != dbScheduleRepository.findDbScheduleByTaskId(taskId))
             throw new TimerException(TimerExceptionEnum.PRIMARY_KEY_REPEAT.code());
 
@@ -107,6 +107,17 @@ public class DbScheduleService implements IDbScheduleService, IDbScheduleEndpoin
             dbSchedule.setUpDate(LocalDateTime.now());
             this.dbScheduleRepository.save(dbSchedule);
         }
+        return this.scheduleInitializeSharedData.shutdown(taskId);
+    }
+
+    @Override
+    public Boolean deleteTimer(String taskId) {
+        DbSchedule dbSchedule = this.dbScheduleRepository.findDbScheduleByTaskIdAndStatus(taskId, TaskStatusEnum.DISABLE.code());
+        if (null == dbSchedule) {
+            LOGGER.error("[动态定时] 启用TaskId:{} 定时器失败，定时器不存在...", taskId);
+            throw new TimerException(TimerExceptionEnum.TIMER_DOESN_EXIST.code());
+        }
+        this.dbScheduleRepository.delete(dbSchedule);
         return this.scheduleInitializeSharedData.shutdown(taskId);
     }
 

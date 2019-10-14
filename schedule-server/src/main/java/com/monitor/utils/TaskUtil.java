@@ -11,14 +11,16 @@ import java.util.stream.Collectors;
 public class TaskUtil {
 
     // 秒 分 时 日 月 星期 年
-    public static String generate(String prefix, @NotBlank String cron) {
+    public static String generate(String applicationName, String prefix, @NotBlank String cron) {
         String str = cron.replaceAll(" ", "");
         byte[] bytes = str.getBytes();
-        List<Integer> arrs = new ArrayList<>();
+        List<Integer> expressions = new ArrayList<>();
         for (byte aByte : bytes) {
-            arrs.add((int) aByte);
+            expressions.add((int) aByte);
         }
-        prefix = null == prefix ? "" : prefix;
-        return arrs.stream().map(String::valueOf).collect(Collectors.joining("", prefix, ""));
+        prefix = prefix.toUpperCase();
+        applicationName = applicationName.replaceAll("-", "").toUpperCase();
+        String expression = expressions.stream().map(String::valueOf).collect(Collectors.joining());
+        return String.format("%s_%s_%s", applicationName, prefix, expression);
     }
 }

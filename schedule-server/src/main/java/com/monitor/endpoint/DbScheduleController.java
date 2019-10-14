@@ -3,7 +3,6 @@ package com.monitor.endpoint;
 import com.monitor.base.FeignResult;
 import com.monitor.core.DefaultRunnable;
 import com.monitor.service.IDbScheduleService;
-import com.monitor.utils.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +22,8 @@ public class DbScheduleController {
     }
 
     @PutMapping
-    public FeignResult updateTimer(String tag, String cron) {
-        return FeignResult.ok(iDbScheduleService.updateTimer(TaskUtil.generate(tag, cron), cron));
+    public FeignResult updateTimer(String taskId, String cron) {
+        return FeignResult.ok(iDbScheduleService.updateTimer(taskId, cron));
     }
 
     @PutMapping(value = "/{taskId}/enable")
@@ -36,9 +35,18 @@ public class DbScheduleController {
         return FeignResult.err(-1, "err");
     }
 
-    @PutMapping(value = "/{taskId}")
+    @PutMapping(value = "/{taskId}/shutdown")
     public FeignResult shutdownTimer(@PathVariable String taskId) {
         Boolean aBoolean = iDbScheduleService.shutdownTimer(taskId);
+        if (aBoolean) {
+            return FeignResult.ok(true);
+        }
+        return FeignResult.err(-1, "err");
+    }
+
+    @DeleteMapping
+    public FeignResult deleteTimer(@PathVariable String taskId) {
+        Boolean aBoolean = iDbScheduleService.deleteTimer(taskId);
         if (aBoolean) {
             return FeignResult.ok(true);
         }
