@@ -21,36 +21,44 @@ buildscript {
         springBootVersion = '2.0.3.RELEASE'
     }
     repositories {
-        maven { url 'https://maven.aliyun.com/content/groups/public/' }
-        maven { url 'https://repository.jboss.org/nexus/content/groups/public/' }
-        maven {
-            url "https://plugins.grdev.net/m2/"
-        }
+        mavenLocal()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url 'https://repo.spring.io/libs-snapshot' }
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
         mavenCentral()
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
     }
 }
 
+/**
+ * ===================================================================================================================
+ * -------------------------------------------       插件管理         ----------------------------------------------
+ * ===================================================================================================================
+ */
 plugins {
     id "com.bmuschko.docker-java-application" version "3.3.6"   //通过其远程API管理Docker镜像和容器.
     id "com.bmuschko.docker-remote-api" version "3.3.6"         //Gradle插件,通过其远程API管理Docker镜像和容器.
 }
 
 /**
- * 生成gradlew文件,统一gradle版本,避免因为版本不同产生的问题
+ * ===================================================================================================================
+ * -------------------------------------------       引入项目插件         ----------------------------------------------
+ * ===================================================================================================================
  */
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.8'
-}
-
 configure(allprojects) { project ->
 
+    // 基本属性
     group = "org.custom"
     version = "0.0.1-SNAPSHOT"
 
+    // 引入插件
     apply plugin: "java"
     apply plugin: 'idea'
     apply plugin: 'eclipse'
@@ -58,21 +66,25 @@ configure(allprojects) { project ->
     apply plugin: 'com.bmuschko.docker-remote-api'
     apply plugin: 'com.bmuschko.docker-java-application'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
 
-    if (!(name.contains('common'))) {
-        apply plugin: 'org.springframework.boot'
-    }
+    // JDK版本声明
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
+    // 配置仓库
     repositories {
-        maven { url 'https://maven.aliyun.com/content/groups/public/' }
-        maven { url 'https://repository.jboss.org/nexus/content/groups/public/' }
-        maven {
-            url "https://plugins.grdev.net/m2/"
-        }
+        mavenLocal()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url 'https://repo.spring.io/libs-snapshot' }
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
         mavenCentral()
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
-    mainClassName = 'com.cutom'
 
     //指定项目编码
     tasks.withType(JavaCompile) {
@@ -90,6 +102,7 @@ configure(allprojects) { project ->
         archiveName = "${project.group}_${project.name}_${project.version}.jar"
     }
 
+    // 依赖版本号
     ext.springBootVersion = '2.0.3.RELEASE'
     ext.springCloudVersion = 'Finchley.RELEASE'
     ext.springDataVersion = '2.0.8.RELEASE'
@@ -111,6 +124,14 @@ configure(allprojects) { project ->
     ext.poiVersion = '4.0.0'
     ext.lang3Version = '3.7'
     ext.commonsIoVersion = '2.4'
+}
+
+/**
+ * ===================================================================================================================
+ * -------------------------------------------      所有子项目的通用配置     ---------------------------------------------
+ * ===================================================================================================================
+ */
+configure(subprojects) { project ->
 
     dependencyManagement {
         imports {
@@ -126,6 +147,11 @@ configure(allprojects) { project ->
     compileJava.dependsOn(processResources)
 }
 
+/**
+ * ===================================================================================================================
+ * -------------------------------------------      docker相关配置        ---------------------------------------------
+ * ===================================================================================================================
+ */
 configure(subprojects) {
     project ->
 
@@ -140,8 +166,8 @@ configure(subprojects) {
             url = 'tcp://192.168.1.210:2375'
             registryCredentials {
                 url = 'http://docker_engine'
-                username = 'webuser'
-                password = 'webuser'
+                username = 'fuyingduo'
+                password = 'mimagaosuni0'
             }
         }
 
@@ -233,7 +259,7 @@ project("common-server") {
 
 project("eureka-server") {
     description = "eureka-server"
-
+    mainClassName = 'com.custom.EkApplication'
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
         compile("org.springframework.boot:spring-boot-starter-test")
@@ -339,7 +365,7 @@ project("config-server") {
 
 project("auth-server") {
     description = "auth-server"
-
+    mainClassName = 'com.custom.AuthApplication'
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
         compile("org.springframework.boot:spring-boot-starter-test")
@@ -436,7 +462,12 @@ project("admin-server") {
     }
 }
 
-
+/**
+ * 生成gradlew文件,统一gradle版本,避免因为版本不同产生的问题
+ */
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.8'
+}
 /**
  * 关闭父项目的打包功能
  */
