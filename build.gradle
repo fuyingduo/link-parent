@@ -1,12 +1,31 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+import com.bmuschko.gradle.docker.tasks.image.*
+
+/**
+ *          ,.-·~ ^~,      .-,             ,'´¨';'        ,-·-.          ,'´¨;        ;'*¨'`·- .,  
+ *       .'´  ,.-·~-.,':\     ;  ';\          ,'   ';'\'      ';   ';\      ,'´  ,':\'      \`:·-,. ,   '` ·.  '
+ *      ;   ,':\::::::'\::\   ';   ;:'\        ,'   ,'::'\      ;   ';:\   .'   ,'´::'\'      '\:/   ;\:'`:·,  '`·, '
+ *     ;'   ;:::'_-·~-\;'   ';  ';::';      ,'   ,'::::;      '\   ';::;'´  ,'´::::;'        ;   ;'::\;::::';   ;\
+ *   ,.'    'ª*'´ __'`;\ °   ';  ';::;     ,'   ,'::::;'         \  '·:'  ,'´:::::;' '        ;  ,':::;  `·:;;  ,':'\'
+ *   `',   ;\¯::::::::\:\   ';  ';::;    ,'   ,'::::;'           '·,   ,'::::::;'´         ;   ;:::;    ,·' ,·':::;
+ *    ;   ;::\;::_:_::\;'    \   '·:_,'´.;   ;::::;            ,'  /::::::;'  '         ;  ;:::;'  ,.'´,·´:::::;
+ *    ;  ';:::;        '        \·,   ,.·´:';  ';:::';           ,´  ';\::::;'  '          ':,·:;::-·´,.·´\:::::;´'
+ *    ';  ;::';                  \:\¯\:::::\`*´\::;  '         \`*ª'´\\::/              \::;. -·´:::::;\;·´
+ *     \*´\:';        '           `'\::\;:·´'\:::'\'   '          '\:::::\';  '              \;'\::::::::;·´'
+ *      '\::\;     '                           `*´°               `*ª'´                     `\;::-·´
+ *        `*´                                 '                    '
+ */
+
 buildscript {
     ext {
         springBootVersion = '2.0.3.RELEASE'
     }
     repositories {
-        mavenLocal()
         maven { url 'https://maven.aliyun.com/content/groups/public/' }
         maven { url 'https://repository.jboss.org/nexus/content/groups/public/' }
-        maven { url 'https://mirrors.ibiblio.org/pub/mirrors.maven2/' }
+        maven {
+            url "https://plugins.grdev.net/m2/"
+        }
         mavenCentral()
         jcenter()
     }
@@ -15,39 +34,29 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.bmuschko.docker-java-application" version "3.3.6"   //通过其远程API管理Docker镜像和容器.
+    id "com.bmuschko.docker-remote-api" version "3.3.6"         //Gradle插件,通过其远程API管理Docker镜像和容器.
+}
+
+/**
+ * 生成gradlew文件,统一gradle版本,避免因为版本不同产生的问题
+ */
 task wrapper(type: Wrapper) {
     gradleVersion = '4.8'
 }
 
 configure(allprojects) { project ->
+
     group = "org.custom"
     version = "0.0.1-SNAPSHOT"
-
-    ext.springBootVersion       = '2.0.3.RELEASE'
-    ext.springCloudVersion      = 'Finchley.RELEASE'
-    ext.springDataVersion       = '2.0.8.RELEASE'
-    ext.guavaVersion            = '21.0'
-    ext.zipkinVersion           = '2.11.8'
-    ext.logstashVersion         = '4.11'
-    ext.jwtVersion              = '0.7.0'
-    ext.fastjsonVersion         = '1.2.28'
-    ext.mysqlVersion            = '8.0.13'
-    ext.druidVersion            = '1.1.10'
-    ext.mybatisVersion          = '1.3.2'
-    ext.jacksonVersion          = '2.9.8'
-    ext.swaggerVersion          = '2.9.2'
-    ext.commonsVersion          = '1.10'
-    ext.embedVersion            = '8.5.31'
-    ext.druidVersion            = '1.1.12'
-    ext.springContextVersion    = '5.0.7.RELEASE'
-    ext.okhttp3Version          = '4.0.1'
-    ext.poiVersion              = '4.0.0'
-    ext.lang3Version            = '3.7'
-    ext.commonsIoVersion        = '2.4'
 
     apply plugin: "java"
     apply plugin: 'idea'
     apply plugin: 'eclipse'
+    apply plugin: 'application'
+    apply plugin: 'com.bmuschko.docker-remote-api'
+    apply plugin: 'com.bmuschko.docker-java-application'
     apply plugin: 'io.spring.dependency-management'
 
     if (!(name.contains('common'))) {
@@ -55,31 +64,150 @@ configure(allprojects) { project ->
     }
 
     repositories {
-        maven { url 'https://repo.spring.io/snapshot' }
-        maven { url 'https://repo.spring.io/milestone' }
+        maven { url 'https://maven.aliyun.com/content/groups/public/' }
+        maven { url 'https://repository.jboss.org/nexus/content/groups/public/' }
+        maven {
+            url "https://plugins.grdev.net/m2/"
+        }
         mavenCentral()
         jcenter()
-
     }
+    mainClassName = 'com.cutom'
+
+    //指定项目编码
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+    //在多模块下,授权打包依赖模块
+    jar {
+        enabled = true
+    }
+
+    //重打包基础配置
+    bootJar {
+        launchScript()
+        archiveName = "${project.group}_${project.name}_${project.version}.jar"
+    }
+
+    ext.springBootVersion = '2.0.3.RELEASE'
+    ext.springCloudVersion = 'Finchley.RELEASE'
+    ext.springDataVersion = '2.0.8.RELEASE'
+    ext.guavaVersion = '21.0'
+    ext.zipkinVersion = '2.11.8'
+    ext.logstashVersion = '4.11'
+    ext.jwtVersion = '0.7.0'
+    ext.fastjsonVersion = '1.2.28'
+    ext.mysqlVersion = '8.0.13'
+    ext.druidVersion = '1.1.10'
+    ext.mybatisVersion = '1.3.2'
+    ext.jacksonVersion = '2.9.8'
+    ext.swaggerVersion = '2.9.2'
+    ext.commonsVersion = '1.10'
+    ext.embedVersion = '8.5.31'
+    ext.druidVersion = '1.1.12'
+    ext.springContextVersion = '5.0.7.RELEASE'
+    ext.okhttp3Version = '4.0.1'
+    ext.poiVersion = '4.0.0'
+    ext.lang3Version = '3.7'
+    ext.commonsIoVersion = '2.4'
+
     dependencyManagement {
         imports {
             mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
         }
     }
-    
     dependencies {
         if (!name.contains("common-server")) {
             compile "org.springframework.boot:spring-boot-configuration-processor"
+            testCompile("junit:junit:4.12")
         }
     }
     compileJava.dependsOn(processResources)
+}
 
-    task copyTestResources(type: Copy) {
-        from "${projectDir}/src/test/resources"
-        into "${buildDir}/classes/test"
-    }
-    processTestResources.dependsOn copyTestResources
+configure(subprojects) {
+    project ->
 
+
+        // Dockerfile文件存放地址
+        String dockerFileDir = 'build/docker'
+
+        //docker文件
+        String dockFilePath = "${dockerFileDir}/Dockerfile"
+
+        docker {
+            url = 'tcp://192.168.1.210:2375'
+            registryCredentials {
+                url = 'http://docker_engine'
+                username = 'webuser'
+                password = 'webuser'
+            }
+        }
+
+        task cleanDocker(type: Delete) {
+            delete fileTree("${buildDir}/docker") {
+                include '**/*'
+            }
+        }
+        task copyBuild(type: Copy, dependsOn: build) {
+            dependsOn cleanDocker
+            from "build/libs/${project.getName()}-${version}.jar"
+            into 'build/docker'
+        }
+        task copyScript(type: Copy, dependsOn: copyBuild) {
+            from project.file("${buildDir}/resources/main/script")
+            into project.file("${buildDir}/docker/script")
+        }
+
+        task createDockerFile(type: Dockerfile) {
+            //指定脚本分组
+            group = "docker"
+            //脚本依赖 build任务
+            dependsOn build
+            //指定生成的Dockerfile所处的位置.
+            destFile = project.file(dockFilePath)
+            //指定依赖的基础镜像
+            from 'openjdk:8-jdk-alpine'
+            //指定作者信息,但是盖指令在较新的版本中已经被遗弃了,推荐使用label命令.
+            maintainer 'weoil "xxx@qq.com"'
+            //指定挂载目录
+            volume "/tmp"
+            //扩展标签
+            label(['author': 'weoil', 'email': 'xxx@qq.com'])
+            //添加参数
+            arg "JAR_FILE"
+            //编译时将jar包保存进去
+            copyFile('${JAR_FILE}', "${project.getName()}-${version}.jar")
+            //指定脚本执行命令
+            entryPoint("java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/${project.getName()}-${version}.jar")
+        }
+
+        /**
+         * 构建基础镜像
+         */
+        task image(type: DockerBuildImage) {
+            group = 'docker'
+            dependsOn createDockerFile
+            //指定Dockerfile文件
+            inputDir = project.file("build/docker")
+            dockerFile = project.file(dockFilePath)
+            //标签
+            tag = "${project.group}/${project.name}:${project.version}"
+
+            //指定在执行build命令时,使用的构建参数.
+            buildArgs = ["JAR_FILE": "${bootJar.archiveName}"]
+
+            /**
+             * 在构建容器前,将jar包和Dockerfile放置到同一目录下.
+             */
+            doFirst {
+                copy {
+                    from bootJar
+                    into "${project.buildDir}/docker"
+                }
+            }
+        }
 }
 
 project("common-server") {
@@ -309,3 +437,15 @@ project("admin-server") {
 }
 
 
+/**
+ * 关闭父项目的打包功能
+ */
+bootJar {
+    enabled = false
+}
+/**
+ * 关闭父项目的打包功能
+ */
+jar {
+    enabled = false
+}
