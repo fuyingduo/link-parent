@@ -154,8 +154,9 @@ configure(subprojects) { project ->
  */
 configure(subprojects) {
     project ->
-
-
+        if (name.contains("common-server")) {
+            return ;
+        }
         // Dockerfile文件存放地址
         String dockerFileDir = 'build/docker'
 
@@ -219,7 +220,7 @@ configure(subprojects) {
             inputDir = project.file("build/docker")
             dockerFile = project.file(dockFilePath)
             //标签
-            tag = "${project.name}:${project.version}"
+            tag = "${project.group}/${project.name}:${project.version}"
 
             //指定在执行build命令时,使用的构建参数.
             buildArgs = ["JAR_FILE": "${bootJar.archiveName}"]
@@ -271,6 +272,7 @@ project("eureka-server") {
 
 project("zipkin-server") {
     description = "zipkin-server"
+    mainClassName = 'com.custom.ZipKinApplication'
 
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
@@ -287,6 +289,7 @@ project("zipkin-server") {
 
 project("zuul-server") {
     description = "zuul-server"
+    mainClassName = 'com.custom.ZuulApplication'
 
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
@@ -301,6 +304,7 @@ project("zuul-server") {
 
 project("user-server") {
     description = "user-server"
+    mainClassName = 'com.custom.UserApplication'
 
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
@@ -333,6 +337,7 @@ project("user-server") {
 
 project("file-server") {
     description = "file-server"
+    mainClassName = 'com.custom.FileApplication'
 
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
@@ -349,6 +354,7 @@ project("file-server") {
 
 project("config-server") {
     description = "config-server"
+    mainClassName = 'com.custom.ConfigApplication'
 
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
@@ -376,6 +382,7 @@ project("auth-server") {
 
 project("schedule-server") {
     description = "schedule-server"
+    mainClassName = 'com.custom.ScheduleApplication'
 
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
@@ -393,6 +400,7 @@ project("schedule-server") {
 
 project("amqp-server") {
     description = "amqp-server"
+    mainClassName = 'com.custom.AmqpApplication'
 
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
@@ -405,6 +413,7 @@ project("amqp-server") {
 
 project("payment-server") {
     description = "payment-server"
+    mainClassName = 'com.custom.PayApplication'
 
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
@@ -417,6 +426,7 @@ project("payment-server") {
 
 project("product-server") {
     description = "product-server"
+    mainClassName = 'com.custom.ProApplication'
 
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
@@ -449,6 +459,7 @@ project("product-server") {
 project("admin-server") {
 
     description = "admin-server"
+    mainClassName = 'com.custom.AdminApplication'
 
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
