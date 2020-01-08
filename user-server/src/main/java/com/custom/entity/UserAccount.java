@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * 账户信息
  * created by fuyd on 2019-07-03
  */
-@Entity(name = "user_account")
+@Entity(name = "user_account" )
 @EntityListeners(AuditingEntityListener.class)
 public class UserAccount {
 
