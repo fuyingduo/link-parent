@@ -4,3 +4,13 @@
 /*/build/
 /link-parent.iml
 /build/
+/*/bin/
+.vscode/
+*/.settings/
+*/.project
+*/.classpath
+*/.DS_Store
+.DS_Store
+.classpath
+.project
+.settings/

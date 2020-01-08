@@ -1,0 +1,14 @@
+link:
+  oss:
+    endpoint: "oss-cn-beijing.aliyuncs.com"
+    access-key-id: "LTAIhQoSbh51K67C"
+    access-key-secret: "AoAr7HloS3q0ikJAAlW5lpHtAfcYOw"
+    bucket-name: "fuyd"
+    max-connections: 500
+    socket-timeout: 20000
+    connection-timeout: 10000
+  directory:
+    video: video
+    audio: audio
+    picture: picture
+    document: documentasdas

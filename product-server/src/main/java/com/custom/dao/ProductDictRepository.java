@@ -23,5 +23,5 @@ public interface ProductDictRepository extends JpaRepository<ProductDict, Intege
      *
      * @param parentId 父id
      */
-    Stream<ProductDict> findAllByParentId(Integer parentId);
+    Stream<ProductDict> findAllByParentId(String parentId);
 }

@@ -85,7 +85,7 @@ configure(allprojects) { project ->
             url "https://plugins.gradle.org/m2/"
         }
     }
-
+    
     //指定项目编码
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
@@ -124,6 +124,8 @@ configure(allprojects) { project ->
     ext.poiVersion = '4.0.0'
     ext.lang3Version = '3.7'
     ext.commonsIoVersion = '2.4'
+    ext.ossVersion = '3.5.0'
+    ext.lombokVersion = '1.18.8'
 }
 
 /**
@@ -207,7 +209,7 @@ configure(subprojects) {
             //编译时将jar包保存进去
             copyFile('${JAR_FILE}', "${project.getName()}-${version}.jar")
             //指定脚本执行命令
-            entryPoint("java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/${project.getName()}-${version}.jar")
+            entryPoint("java", "-jar", "/${project.getName()}-${version}.jar")
         }
 
         /**
@@ -255,6 +257,7 @@ project("common-server") {
         compile("org.springframework.boot:spring-boot-starter-aop:${springBootVersion}")
         compile("org.springframework:spring-web:${springContextVersion}")
         compileOnly("javax.servlet:servlet-api:2.5")
+        compile("org.projectlombok:lombok:${lombokVersion}")
     }
 }
 
@@ -348,6 +351,7 @@ project("file-server") {
         compile("net.logstash.logback:logstash-logback-encoder:${logstashVersion}")
         compile("org.springframework.cloud:spring-cloud-starter-openfeign")
         compile("net.sourceforge.jexcelapi:jxl:2.6.12")
+        compile("com.aliyun.oss:aliyun-sdk-oss:${ossVersion}")
         compile(project(":common-server"))
     }
 }
@@ -407,6 +411,7 @@ project("amqp-server") {
         compile("org.springframework.boot:spring-boot-starter-test")
         compile("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
         compile("org.springframework.boot:spring-boot-starter-amqp")
+        compile("org.apache.rocketmq:rocketmq-client:4.5.2")
         compile(project(":common-server"))
     }
 }
@@ -470,6 +475,25 @@ project("admin-server") {
         compile("org.springframework.boot:spring-boot-starter-mail")
         compile("org.jolokia:jolokia-core")
         compile("org.springframework.boot:spring-boot-starter-security")
+    }
+}
+
+project("dispatch-server") {
+
+    description = "dispatch-server"
+    mainClassName = 'com.custom.DispatchApplication'
+
+    dependencies {
+        compile("org.springframework.boot:spring-boot-starter-web")
+        compile("org.springframework.boot:spring-boot-starter-test")
+        compile("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+        compile("org.springframework.boot:spring-boot-starter-data-jpa")
+        runtime("mysql:mysql-connector-java")
+        compile("com.alibaba:druid:${druidVersion}")
+        compile("org.springframework.cloud:spring-cloud-starter-openfeign")
+        compile("org.springframework.boot:spring-boot-starter-quartz")
+        compile("org.springframework.cloud:spring-cloud-starter-netflix-ribbon")
+        compile(project(":common-server"))
     }
 }
 

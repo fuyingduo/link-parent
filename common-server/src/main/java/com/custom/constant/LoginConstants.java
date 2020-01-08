@@ -26,7 +26,7 @@ public class LoginConstants {
      * 密钥
      * {@link com.custom.util.JwtUtil}
      */
-    public static final String SECRTE = "WH#$%(!)(#*!()!KL<55$6><MQLMNQNQJQK EiLCJuYW1lIjoif>?N<:{LWPW";
+    public static final String SECRTE = "WH#$%(!)(#*!()!KL<55$6><MQLMNQNQJQK EiLCJuYW1lIjoif>?N<:{LWPWasdf";
 
     /**
      * token key

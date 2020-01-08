@@ -1,11 +1,13 @@
 package com.custom.jwt;
 
 import com.custom.util.JwtUtil;
+import lombok.ToString;
 
 /**
  * 默认构建器
  * created by fuyd on 2019-07-04
  */
+@ToString
 public class DefaultTokenBuilder implements TokenBuilder {
 
     private Integer id;

@@ -38,7 +38,7 @@ public class ProductDictService implements IProductDictService {
     }
 
     @Override
-    public Stream<ProductDict> findProductDictsByParentId(Integer parentId) {
+    public Stream<ProductDict> findProductDictsByParentId(String parentId) {
         return productDictRepository.findAllByParentId(parentId);
     }
 }

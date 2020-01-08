@@ -34,9 +34,9 @@ public class ProductClassificationService implements IProductClassificationServi
     @Override
     @Transactional(readOnly = true)
     @Cacheable(value = "root_cache", key = "getArgs()")
-    public List<Classification> classificationList(Integer id) {
+    public List<Classification> classificationList(String id) {
         try (Stream<ProductDict> dictStream = iProductDictService.findProductDictsByParentId(id)) {
-            return dictStream.map(pd -> new Classification(pd.getId(), pd.getName(), nextDirectories(pd.getId()))).collect(toList());
+            return dictStream.map(pd -> new Classification(pd.getId(), pd.getName(), nextDirectories(pd.getId().toString()))).collect(toList());
         }
     }
 
@@ -45,7 +45,7 @@ public class ProductClassificationService implements IProductClassificationServi
      *
      * @param id 上级目录id
      */
-    private List<Categories> nextDirectories(Integer id) {
+    private List<Categories> nextDirectories(String id) {
         try (Stream<ProductDict> subStream = iProductDictService.findProductDictsByParentId(id)) {
             return subStream.map(Categories::new).collect(toList());
         }

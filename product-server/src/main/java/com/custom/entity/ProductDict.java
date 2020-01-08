@@ -27,7 +27,7 @@ public class ProductDict {
      * 父id
      */
     @Column(name = "parent_id")
-    private Integer parentId;
+    private String parentId;
 
     /**
      * 排序
@@ -58,11 +58,11 @@ public class ProductDict {
         this.level = level;
     }
 
-    public Integer getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Integer parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 

@@ -13,4 +13,4 @@ include 'amqp-server'
 include 'payment-server'
 include 'product-server'
 include 'admin-server'
-
+include 'dispatch-server'

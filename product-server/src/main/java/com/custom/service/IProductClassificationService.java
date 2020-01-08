@@ -20,5 +20,5 @@ public interface IProductClassificationService {
      *
      * @param id 字典id
      */
-    List<Classification> classificationList(Integer id);
+    List<Classification> classificationList(String id);
 }

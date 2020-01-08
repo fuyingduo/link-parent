@@ -1,0 +1,5 @@
+server:
+  port: 9909
+spring:
+  application:
+    name: dispatch-server

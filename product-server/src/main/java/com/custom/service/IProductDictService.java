@@ -32,5 +32,5 @@ public interface IProductDictService {
      *
      * @param parentId 父id
      */
-    Stream<ProductDict> findProductDictsByParentId(Integer parentId);
+    Stream<ProductDict> findProductDictsByParentId(String parentId);
 }

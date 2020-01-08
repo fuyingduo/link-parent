@@ -16,7 +16,7 @@ public class EkApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(EkApplication.class, args);
-    }
+    } 
 
     @Configuration
     public static class SecurityPermitAllConfig extends WebSecurityConfigurerAdapter {

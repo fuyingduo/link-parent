@@ -6,6 +6,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 /**
@@ -25,9 +26,9 @@ public class UserLogin {
     private Integer type;
     @Column(name = "visit_jurisdiction")
     private Integer visitJurisdiction;
-    @Column(name = "cr_date")
     @CreatedDate
-    private LocalDateTime crDate;
+    @Column(name = "cr_date", columnDefinition = "timestamp comment '创建时间'")
+    private Instant crDate;
     @Column(name = "up_data")
     @LastModifiedDate
     private LocalDateTime upData;
@@ -77,11 +78,11 @@ public class UserLogin {
         this.visitJurisdiction = visitJurisdiction;
     }
 
-    public LocalDateTime getCrDate() {
+    public Instant getCrDate() {
         return crDate;
     }
 
-    public void setCrDate(LocalDateTime crDate) {
+    public void setCrDate(Instant crDate) {
         this.crDate = crDate;
     }
 
