@@ -154,7 +154,7 @@ public class UnifiedOrderParam {
     /**
      * 无参构造器 javabean转xml
      */
-    private UnifiedOrderParam() {
+    public UnifiedOrderParam() {
     }
 
     /**

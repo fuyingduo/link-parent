@@ -3,19 +3,15 @@ package com.custom.util;
 import com.custom.constant.LoginConstants;
 import com.custom.jwt.DefaultTokenBuilder;
 import com.custom.jwt.TokenBuilder;
-import com.custom.jwt.Tokens;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
-import kotlin.text.Charsets;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +42,6 @@ public class JwtUtil {
      *
      * @param token token
      * @return Tokens.class
-     * @throws com.sun.xml.internal.ws.handler.HandlerException
      */
     public static DefaultTokenBuilder validateToken(String token) {
         if (null == token || "".equals(token)) {

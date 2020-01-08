@@ -1,8 +1,5 @@
 package com.custom.result;
 
-import lombok.Data;
-import lombok.ToString;
-
 /**
  * created by fuyd on 2019-11-01
  */

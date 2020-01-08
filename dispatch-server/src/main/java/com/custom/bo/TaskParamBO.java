@@ -3,7 +3,6 @@ package com.custom.bo;
 import com.custom.entity.Job;
 import com.custom.enums.StatusEnum;
 import com.custom.exception.HandleException;
-import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 /**

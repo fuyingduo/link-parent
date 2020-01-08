@@ -19,7 +19,7 @@ public class SandboxParam {
     private String nonce_str;
     private String sign;
 
-    private SandboxParam() {
+    public SandboxParam() {
     }
 
     public SandboxParam(String mch_id) {

@@ -41,7 +41,6 @@ public class UserController {
 
     @RequestMapping(value = "/cache/get/{id}")
     public String getchache(@PathVariable String id) {
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
         return userService.cache(id);
     }
 

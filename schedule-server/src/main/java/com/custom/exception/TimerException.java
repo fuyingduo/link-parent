@@ -8,6 +8,10 @@ import com.custom.enums.TimerExceptionEnum;
  */
 public class TimerException extends RuntimeException {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     // 异常状态码
     private Integer code;
     // 异常信息

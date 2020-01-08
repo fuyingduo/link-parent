@@ -103,7 +103,6 @@ public class HolidaySeasonComponent {
             maps.add(dates);
         }
         List<List<LocalDate>> allDays = maps.stream().filter(ls -> ls.size() >= index).collect(Collectors.toList());
-        String allstr = allDays.stream().map(d -> d.stream().map(LocalDate::toString).collect(Collectors.joining(","))).collect(Collectors.joining(","));
         System.out.println(JSON.toJSONString(allDays));
     }
 

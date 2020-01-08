@@ -19,14 +19,14 @@ import java.util.concurrent.Future;
 @Service
 public class UserService {
 
-    private Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     RestTemplate restTemplate;
 
     //请求合并的方法
     @HystrixCollapser(batchMethod = "findAll",collapserProperties = {@HystrixProperty(name = "timerDelayInMilliseconds",value = "3000")})
-    public Future<String> find(String id){
+    public Future<String> find(final String id){
         //这里本应该访问服务提供者提供的/getUser/{id}接口
         logger.info("======执行了find方法========");
         return null;
@@ -36,7 +36,7 @@ public class UserService {
 
     //合并请求之后调用的方法
     @HystrixCommand
-    public List<String> findAll(List<String> ids){
+    public List<String> findAll(final List<String> ids){
         logger.info("======执行了findAll方法========"+ids);
         return restTemplate.getForObject("http://hello-service/getUsers?ids={1}", List.class, StringUtils.join(ids, ","));
     }

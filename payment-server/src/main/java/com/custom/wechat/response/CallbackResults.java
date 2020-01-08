@@ -21,7 +21,7 @@ public class CallbackResults {
      */
     private String return_msg;
 
-    private CallbackResults() {
+    public CallbackResults() {
     }
 
     public CallbackResults(String return_code, String return_msg) {

@@ -56,7 +56,7 @@ public class OrderQueryParam {
 
     private String secret_key;
 
-    private OrderQueryParam() {
+    public OrderQueryParam() {
     }
 
     /**

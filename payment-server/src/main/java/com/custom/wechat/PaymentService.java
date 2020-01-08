@@ -15,7 +15,7 @@ public class PaymentService {
      * 统一下单
      * code 0 成功后返回{@link PlaceOrderResults}
      */
-    public WechatResult paymentOrder(IWechatPayPoxy iWechatPayPoxy) {
+    public WechatResult<Object> paymentOrder(IWechatPayPoxy iWechatPayPoxy) {
         WechatPayManagement management = iWechatPayPoxy.buildPlaceTheOrder();
         return management.placeOrder();
     }
@@ -29,7 +29,7 @@ public class PaymentService {
      * CLOSED—已关闭
      * PAYERROR--支付失败(其他原因，如银行返回失败)
      */
-    public WechatResult orderQuery(IWechatPayPoxy iWechatPayPoxy) {
+    public WechatResult<Object> orderQuery(IWechatPayPoxy iWechatPayPoxy) {
         WechatPayManagement management = iWechatPayPoxy.buildOrderQuery();
         return management.queryOrder();
     }

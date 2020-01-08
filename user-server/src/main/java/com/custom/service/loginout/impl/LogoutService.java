@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class LogoutService implements ILogoutService {
 
     @Autowired
-    private RedisService redisService;
+    private RedisService<Object> redisService;
     private static final Logger LOGGER = LoggerFactory.getLogger(LogoutService.class);
 
     @Override

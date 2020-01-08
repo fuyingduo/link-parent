@@ -21,7 +21,7 @@ public class UserInformationService implements IUserInformation {
     @Autowired
     private UserLoginRepository userLoginRepository;
     @Autowired
-    private RedisService redisService;
+    private RedisService<Object> redisService;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserInformationService.class);
 
     @Override

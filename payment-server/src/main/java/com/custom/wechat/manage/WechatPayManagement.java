@@ -88,7 +88,7 @@ public class WechatPayManagement extends WebApplicationObjectSupport {
         this.outTradeNo = outTradeNo;
     }
 
-    public WechatResult placeOrder() {
+    public WechatResult<Object> placeOrder() {
 
         // 创建统一下单请求参数-签名
         UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam(this.body, this.outTradeNo, this.totalFee, this.properties);
@@ -140,7 +140,7 @@ public class WechatPayManagement extends WebApplicationObjectSupport {
         return WechatResult.ok(date);
     }
 
-    public WechatResult queryOrder() {
+    public WechatResult<Object> queryOrder() {
 
         OrderQueryParam orderQueryParam = new OrderQueryParam(this.outTradeNo, this.properties);
         orderQueryParam.setSign(orderQueryParam);
