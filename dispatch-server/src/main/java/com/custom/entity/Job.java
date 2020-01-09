@@ -2,12 +2,15 @@ package com.custom.entity;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
  * created by fuyd on 2020-01-06
  */
+@Data
 @Entity(name = "dispatch_job")
 public class Job {
 
@@ -36,92 +39,4 @@ public class Job {
     @Version
     @Column(columnDefinition = "int(20) default '0' comment '版本号'")
     private Integer version;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getServiceType() {
-        return serviceType;
-    }
-
-    public void setServiceType(Integer serviceType) {
-        this.serviceType = serviceType;
-    }
-
-    public String getServiceAddress() {
-        return serviceAddress;
-    }
-
-    public void setServiceAddress(String serviceAddress) {
-        this.serviceAddress = serviceAddress;
-    }
-
-    public String getCron() {
-        return cron;
-    }
-
-    public void setCron(String cron) {
-        this.cron = cron;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getHasLog() {
-        return hasLog;
-    }
-
-    public void setHasLog(Integer hasLog) {
-        this.hasLog = hasLog;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
-    public LocalDateTime getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(LocalDateTime updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
 }
