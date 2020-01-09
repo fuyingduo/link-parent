@@ -1,4 +1,4 @@
-# by: ron cordell - roncordell
+/* # by: ron cordell - roncordell
 #  i didn't see this anywhere, so i thought i'd post it here. this is the script from quartz to create the tables in a mysql database, modified to use innodb instead of myisam.
 
 
@@ -176,4 +176,4 @@ create index idx_qrtz_ft_jg on qrtz_fired_triggers(sched_name,job_group);
 create index idx_qrtz_ft_t_g on qrtz_fired_triggers(sched_name,trigger_name,trigger_group);
 create index idx_qrtz_ft_tg on qrtz_fired_triggers(sched_name,trigger_group);
 
-commit;
+commit; */
